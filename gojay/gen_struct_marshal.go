@@ -123,6 +123,12 @@ func (g *Gen) structGenMarshalIdent(field *ast.Field, i *ast.Ident, keys int, om
 	case "sql":
 		g.structGenMarshalSql(field, keyV, omitEmpty, ptr)
 		keys++
+	case "uuid":
+		g.structGenMarshalStringer(field, keyV, omitEmpty, ptr)
+		keys++
+	case "time":
+		g.structGenMarshalTime(field, keyV, omitEmpty, ptr)
+		keys++
 	default:
 		// if ident is already in our spec list
 		if sp, ok := g.genTypes[i.Name]; ok {
@@ -164,6 +170,40 @@ func (g *Gen) structGenMarshalSql(field *ast.Field, keyV string, omitEmpty strin
 		Ptr       string
 		SqlName   string
 	}{key, keyV, omitEmpty, ptrStr, field.Type.(*ast.SelectorExpr).Sel.Name})
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+func (g *Gen) structGenMarshalTime(field *ast.Field, keyV string, omitEmpty string, ptr bool) {
+	key := field.Names[0].String()
+	ptrStr := ""
+	if ptr {
+		ptrStr = "*"
+	}
+	err := structMarshalTpl["time"].tpl.Execute(g.b, struct {
+		Field     string
+		Key       string
+		OmitEmpty string
+		Ptr       string
+	}{key, keyV, omitEmpty, ptrStr})
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+func (g *Gen) structGenMarshalStringer(field *ast.Field, keyV string, omitEmpty string, ptr bool) {
+	key := field.Names[0].String()
+	ptrStr := ""
+	if ptr {
+		ptrStr = "*"
+	}
+	err := structMarshalTpl["stringer"].tpl.Execute(g.b, struct {
+		Field     string
+		Key       string
+		OmitEmpty string
+		Ptr       string
+	}{key, keyV, omitEmpty, ptrStr})
 	if err != nil {
 		log.Fatal(err)
 	}

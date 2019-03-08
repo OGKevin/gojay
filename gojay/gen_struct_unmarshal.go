@@ -128,6 +128,12 @@ func (g *Gen) structGenUnmarshalIdent(field *ast.Field, i *ast.Ident, keys int, 
 	case "sql":
 		g.structUnmarshalSql(field, keyV)
 		keys++
+	case "uuid":
+		g.structUnmarshalUUID(field, keyV)
+		keys++
+	case "time":
+		g.structUnmarshalTime(field, keyV)
+		keys++
 	default:
 		// if ident is already in our spec list
 		if sp, ok := g.genTypes[i.Name]; ok {
@@ -170,6 +176,40 @@ func (g *Gen) structUnmarshalSql(field *ast.Field, keyV string) {
 		Ptr     string
 		SqlName string
 	}{key, "", field.Type.(*ast.SelectorExpr).Sel.Name})
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+func (g *Gen) structUnmarshalTime(field *ast.Field, keyV string) {
+	key := field.Names[0].String()
+	err := structUnmarshalTpl["case"].tpl.Execute(g.b, struct {
+		Key string
+	}{keyV})
+	if err != nil {
+		log.Fatal(err)
+	}
+	err = structUnmarshalTpl["time"].tpl.Execute(g.b, struct {
+		Field   string
+		Ptr     string
+	}{key, ""})
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+func (g *Gen) structUnmarshalUUID(field *ast.Field, keyV string) {
+	key := field.Names[0].String()
+	err := structUnmarshalTpl["case"].tpl.Execute(g.b, struct {
+		Key string
+	}{keyV})
+	if err != nil {
+		log.Fatal(err)
+	}
+	err = structUnmarshalTpl["uuid"].tpl.Execute(g.b, struct {
+		Field   string
+		Ptr     string
+	}{key, ""})
 	if err != nil {
 		log.Fatal(err)
 	}

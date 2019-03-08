@@ -62,6 +62,16 @@ func (v *{{.StructName}}) NKeys() int { return {{.NKeys}} }
 	"sql": &genTpl{
 		strTpl: "\t\treturn dec.SQL{{.SqlName}}(&v.{{.Field}})\n",
 	},
+	"time": &genTpl{
+		strTpl: "\t\treturn dec.Time(&v.{{.Field}}, time.RFC3339)\n",
+	},
+	"uuid": &genTpl{
+		strTpl: `		var u string
+		err := dec.String(&u)
+		v.MasterUuid = uuid.FromStringOrNil(u)
+		return err
+`,
+	},
 	"any": &genTpl{
 		strTpl: "\t\treturn dec.Any(&v.{{.Field}})\n",
 	},

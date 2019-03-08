@@ -35,6 +35,12 @@ func (v *{{.StructName}}) IsNil() bool { return v == nil }
 	"sql": &genTpl{
 		strTpl: "\tenc.SQL{{.SqlName}}Key{{.OmitEmpty}}(\"{{.Key}}\", {{if .Ptr}}{{else}}&{{end}}v.{{.Field}})\n",
 	},
+	"time": &genTpl{
+		strTpl: "\tenc.TimeKey(\"{{.Key}}\", &v.{{.Field}}, time.RFC3339)\n",
+	},
+	"stringer": &genTpl{
+		strTpl: "\tenc.StringKey{{.OmitEmpty}}(\"{{.Key}}\", v.{{.Field}}.String())\n",
+	},
 	"any": &genTpl{
 		strTpl: "\tenc.AnyKey(\"{{.Key}}\", v.{{.Field}})\n",
 	},
