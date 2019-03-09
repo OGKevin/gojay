@@ -68,7 +68,7 @@ func (v *{{.StructName}}) NKeys() int { return {{.NKeys}} }
 	"uuid": &genTpl{
 		strTpl: `		var u string
 		err := dec.String(&u)
-		v.{{.Filed}} = uuid.FromStringOrNil(u)
+		v.{{.Field}} = uuid.FromStringOrNil(u)
 		return err
 `,
 	},
